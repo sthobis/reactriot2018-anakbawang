@@ -87,6 +87,7 @@ class DanceFloor extends Component {
     */
     if (event.data === 0) {
       this.stopAnimation();
+      this.setState({ isSongFinished: true });
     }
   };
 
@@ -221,9 +222,6 @@ class DanceFloor extends Component {
     window.cancelAnimationFrame(this.animationFrame);
     this.animationStart = null;
     this.animationFrame = null;
-
-    // show game results
-    this.printResult();
   };
 
   updateAnimation = timestamp => {
@@ -409,6 +407,7 @@ class DanceFloor extends Component {
             produce(draft => {
               draft.pressedKeys = [];
               draft.resultSequence[currentSequenceIndex] = CONFIG.HIT_TYPE.MISS;
+              draft.perfectStreak = 0;
             })
           );
         }
@@ -418,15 +417,11 @@ class DanceFloor extends Component {
     }
   };
 
-  printResult = () => {
-    const { resultSequence } = this.state;
-    console.log(resultSequence);
-  };
-
   render() {
-    const { song } = this.props;
+    const { song, goToLobby } = this.props;
     const {
       isSongReady,
+      isSongFinished,
       guideOffset,
       solutionSequence,
       resultSequence,
@@ -455,23 +450,26 @@ class DanceFloor extends Component {
           onStateChange={this.handleYoutubeStateChange}
         />
         <div className="gameplay">
-          <div
-            className="guide"
-            style={{
-              width: `${CONFIG.GUIDE_CONTAINER_WIDTH +
-                CONFIG.GUIDE_WIDTH +
-                12}px`
-            }}
-          >
-            <span
-              style={{
-                width: `${CONFIG.GUIDE_WIDTH}px`,
-                height: `${CONFIG.GUIDE_WIDTH}px`,
-                left: `${guideOffset}px`,
-                backgroundColor: CONFIG.COLOR[currentHitType]
-              }}
-            />
-          </div>
+          {isSongReady &&
+            !isSongFinished && (
+              <div
+                className="guide"
+                style={{
+                  width: `${CONFIG.GUIDE_CONTAINER_WIDTH +
+                    CONFIG.GUIDE_WIDTH +
+                    12}px`
+                }}
+              >
+                <span
+                  style={{
+                    width: `${CONFIG.GUIDE_WIDTH}px`,
+                    height: `${CONFIG.GUIDE_WIDTH}px`,
+                    left: `${guideOffset}px`,
+                    backgroundColor: CONFIG.COLOR[currentHitType]
+                  }}
+                />
+              </div>
+            )}
           <div className="sequence">
             {solutionSequence[currentSequenceIndex] &&
               !resultSequence[currentSequenceIndex] &&
@@ -507,6 +505,58 @@ class DanceFloor extends Component {
             ) : null}
           </div>
         </div>
+        {isSongFinished && (
+          <div className="scoreboard">
+            <table>
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Perfect</td>
+                  <td>
+                    {
+                      resultSequence.filter(
+                        str => str === CONFIG.HIT_TYPE.PERFECT
+                      ).length
+                    }
+                  </td>
+                </tr>
+                <tr>
+                  <td>Cool</td>
+                  <td>
+                    {
+                      resultSequence.filter(str => str === CONFIG.HIT_TYPE.COOL)
+                        .length
+                    }
+                  </td>
+                </tr>
+                <tr>
+                  <td>Bad</td>
+                  <td>
+                    {
+                      resultSequence.filter(str => str === CONFIG.HIT_TYPE.BAD)
+                        .length
+                    }
+                  </td>
+                </tr>
+                <tr>
+                  <td>Miss</td>
+                  <td>
+                    {
+                      resultSequence.filter(str => str === CONFIG.HIT_TYPE.MISS)
+                        .length
+                    }
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <button onClick={goToLobby}>Go to lobby</button>
+          </div>
+        )}
         {!isSongReady && <div className="loading-screen">Loading...</div>}
       </div>
     );

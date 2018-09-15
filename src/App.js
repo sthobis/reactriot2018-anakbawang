@@ -12,6 +12,10 @@ class App extends Component {
     this.setState({ readyToPlay: true, song });
   };
 
+  goToLobby = () => {
+    this.setState({ readyToPlay: false });
+  };
+
   render() {
     const { readyToPlay, song } = this.state;
     return (
@@ -19,7 +23,7 @@ class App extends Component {
         {!readyToPlay ? (
           <GameLobby handleChangeSong={this.handleChangeSong} />
         ) : (
-          <DanceFloor song={song} />
+          <DanceFloor song={song} goToLobby={this.goToLobby} />
         )}
       </div>
     );
