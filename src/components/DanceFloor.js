@@ -4,7 +4,19 @@ import Youtube from "react-youtube";
 const guideContainerWidth = 300;
 const guideWidth = 30;
 
-let press = false;
+const HIT_TYPE = {
+  MISS: "MISS",
+  BAD: "BAD",
+  COOL: "COOL",
+  PERFECT: "PERFECT"
+};
+
+const COLOR = {
+  MISS: "grey",
+  BAD: "pink",
+  COOL: "lightblue",
+  PERFECT: "mediumpurple"
+};
 
 class DanceFloor extends Component {
   static defaultProps = {
@@ -21,12 +33,35 @@ class DanceFloor extends Component {
     isSongReady: false,
     isSongFinished: false,
     interval: ((60 * 1000) / this.props.song.bpm) * 4,
-    guideOffset: 0
+    guideOffset: 0,
+    currentHitType: HIT_TYPE.MISS
   };
 
-  componentDidmount() {
+  componentDidMount() {
+    const { interval } = this.state;
+
     this.animationStart = null;
     this.animationFrame = null;
+    this.badWindow = {};
+    this.coolWindow = {};
+    this.perfectWindow = {};
+
+    this.badWindow.duration =
+      ((guideWidth * 2.5) / guideContainerWidth) * interval;
+    this.badWindow.start = interval * 1.75 - this.badWindow.duration / 2;
+    this.badWindow.end = this.badWindow.start + this.badWindow.duration;
+
+    this.coolWindow.duration =
+      ((guideWidth * 1.5) / guideContainerWidth) * interval;
+    this.coolWindow.start = interval * 1.75 - this.coolWindow.duration / 2;
+    this.coolWindow.end = this.coolWindow.start + this.coolWindow.duration;
+
+    this.perfectWindow.duration =
+      ((guideWidth * 0.5) / guideContainerWidth) * interval;
+    this.perfectWindow.start =
+      interval * 1.75 - this.perfectWindow.duration / 2;
+    this.perfectWindow.end =
+      this.perfectWindow.start + this.perfectWindow.duration;
   }
 
   componentWillUnmount() {
@@ -98,13 +133,46 @@ class DanceFloor extends Component {
       ((timePassed % interval) / interval) * guideContainerWidth;
     this.setState({ guideOffset });
 
+    const guidePosition = timePassed % (interval * 2);
+    if (
+      guidePosition > this.badWindow.start &&
+      guidePosition < this.coolWindow.start
+    ) {
+      this.setState({ currentHitType: HIT_TYPE.BAD });
+    } else if (
+      guidePosition > this.coolWindow.start &&
+      guidePosition < this.perfectWindow.start
+    ) {
+      this.setState({ currentHitType: HIT_TYPE.COOL });
+    } else if (
+      guidePosition > this.perfectWindow.start &&
+      guidePosition < this.perfectWindow.end
+    ) {
+      this.setState({ currentHitType: HIT_TYPE.PERFECT });
+    } else if (
+      guidePosition > this.perfectWindow.end &&
+      guidePosition < this.coolWindow.end
+    ) {
+      this.setState({ currentHitType: HIT_TYPE.COOL });
+    } else if (
+      guidePosition > this.coolWindow.end &&
+      guidePosition < this.badWindow.end
+    ) {
+      this.setState({ currentHitType: HIT_TYPE.BAD });
+    } else if (
+      guidePosition < this.badWindow.start ||
+      guidePosition > this.badWindow.end
+    ) {
+      this.setState({ currentHitType: HIT_TYPE.MISS });
+    }
+
     // update continuously until stopped by youtube player (song ended)
     this.animationFrame = window.requestAnimationFrame(this.updateGuide);
   };
 
   render() {
     const { song } = this.props;
-    const { isSongReady, interval, guideOffset } = this.state;
+    const { isSongReady, interval, guideOffset, currentHitType } = this.state;
 
     return (
       <div>
@@ -130,7 +198,7 @@ class DanceFloor extends Component {
             width: `${guideContainerWidth + guideWidth}px`,
             height: "60px",
             position: "relative",
-            backgroundColor: "red"
+            backgroundColor: "silver"
           }}
         >
           <span
@@ -138,7 +206,7 @@ class DanceFloor extends Component {
               display: "block",
               width: `${guideWidth}px`,
               height: "30px",
-              backgroundColor: "blue",
+              backgroundColor: COLOR[currentHitType],
               borderRadius: "50%",
               position: "absolute",
               top: "15px",
