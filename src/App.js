@@ -24,7 +24,7 @@ class App extends Component {
     );
   };
 
-  handleSongChange = song => {
+  handleChangeSong = song => {
     this.setState({ readyToPlay: true, song });
   };
 
@@ -33,7 +33,7 @@ class App extends Component {
     return (
       <div>
         {!readyToPlay ? (
-          <GameLobby onSongChange={this.handleSongChange} />
+          <GameLobby handleChangeSong={this.handleChangeSong} />
         ) : (
           <DanceFloor song={song} />
         )}
