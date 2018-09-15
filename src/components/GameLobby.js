@@ -5,29 +5,33 @@ const songList = [
   {
     title: "So Eun Lee - Loving You",
     youtubeId: "F5cReku6iZg",
-    bpm: 72
+    bpm: 72,
+    previewStartAt: 83,
+    delay: 0,
+    skipInterval: 8
   },
   {
     title: " Audition Days - Canon Groove",
     youtubeId: "N1frS_LWy24",
-    bpm: 105
+    bpm: 105,
+    previewStartAt: 23,
+    delay: 1410,
+    skipInterval: 10
   }
 ];
 
 class GameLobby extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selectedSong: songList[0]
-    };
-  }
+  state = {
+    selectedSong: songList[0]
+  };
 
-  handleSelectSong = song => {
-    this.setState({ selectedSong: song });
+  handleSelectSong = selectedSong => {
+    this.setState({ selectedSong });
   };
 
   render() {
-    const selectedSong = this.state.selectedSong;
+    const { handleChangeSong } = this.props;
+    const { selectedSong } = this.state;
 
     return (
       <div>
@@ -42,9 +46,7 @@ class GameLobby extends Component {
           ))}
         </div>
         <div>
-          <button onClick={() => this.props.handleChangeSong(selectedSong)}>
-            play!
-          </button>
+          <button onClick={() => handleChangeSong(selectedSong)}>play!</button>
         </div>
         <Youtube
           videoId={selectedSong.youtubeId}
@@ -52,11 +54,10 @@ class GameLobby extends Component {
             height: "390",
             width: "640",
             playerVars: {
-              autoplay: 1
+              autoplay: 1,
+              start: selectedSong.previewStartAt
             }
           }}
-          //onReady={this.handleYoutubeReady}
-          //onStateChange={this.handleYoutubeStateChange}
         />
       </div>
     );
