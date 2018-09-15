@@ -10,7 +10,8 @@ class App extends Component {
     song: {
       title: "Audition Days - Canon Groove",
       youtubeId: "N1frS_LWy24",
-      bpm: 105
+      bpm: 105,
+      delay: 1410
     }
   };
 
