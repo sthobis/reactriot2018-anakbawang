@@ -10,7 +10,7 @@ const KEYS_CODE = {
 
 export default {
   GUIDE_CONTAINER_WIDTH: 300,
-  GUIDE_WIDTH: 30,
+  GUIDE_WIDTH: 20,
   HIT_TYPE: {
     MISS: "MISS",
     BAD: "BAD",

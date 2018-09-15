@@ -2,6 +2,7 @@ import produce from "immer";
 import React, { Component } from "react";
 import Youtube from "react-youtube";
 import CONFIG from "../config";
+import "../styles/DanceFloor.css";
 
 const keyCodeToString = key => {
   if (key === 37) return "◀";
@@ -13,14 +14,7 @@ const keyCodeToString = key => {
 
 class DanceFloor extends Component {
   static defaultProps = {
-    song: {
-      title: "So Eun Lee - Loving You",
-      youtubeId: "F5cReku6iZg",
-      bpm: 72,
-      previewStartAt: 83,
-      delay: 0,
-      skipInterval: 8
-    }
+    song: CONFIG.SONG_LIST[1]
   };
 
   // interval: https://github.com/Hackbit/reactriot2018-anakbawang/wiki
@@ -100,6 +94,10 @@ class DanceFloor extends Component {
   createGameSession = () => {
     this.setTimingWindow();
     this.setSolutionSequence();
+
+    // everything is ready at this point
+    // we can start the game
+    this.startGame();
   };
 
   setTimingWindow = () => {
@@ -423,35 +421,42 @@ class DanceFloor extends Component {
     } = this.state;
 
     return (
-      <div>
-        {interval}
+      <div className="room">
         <Youtube
           videoId={song.youtubeId}
+          containerClassName="youtube"
           opts={{
             height: "390",
             width: "640",
             playerVars: {
-              autoplay: 1
+              autoplay: 1,
+              controls: 0,
+              disablekb: 1,
+              showinfo: 0
             }
           }}
           onReady={this.handleYoutubeReady}
           onStateChange={this.handleYoutubeStateChange}
         />
-        <div>
-          <button
-            onClick={e => {
-              e.target.blur();
-              this.startGame();
+        <div className="gameplay">
+          <div
+            className="guide"
+            style={{
+              width: `${CONFIG.GUIDE_CONTAINER_WIDTH + CONFIG.GUIDE_WIDTH}px`
             }}
           >
-            Start Game
-          </button>
-          <button onClick={this.stopGame}>Stop Game</button>
-        </div>
-        <div>
-          {solutionSequence[currentSequenceIndex] &&
-          !resultSequence[currentSequenceIndex]
-            ? solutionSequence[currentSequenceIndex].map((key, i) => (
+            <span
+              style={{
+                width: `${CONFIG.GUIDE_WIDTH}px`,
+                height: `${CONFIG.GUIDE_WIDTH}px`,
+                left: `${guideOffset}px`
+              }}
+            />
+          </div>
+          <div className="sequence">
+            {solutionSequence[currentSequenceIndex] &&
+              !resultSequence[currentSequenceIndex] &&
+              solutionSequence[currentSequenceIndex].map((key, i) => (
                 <span
                   key={i}
                   style={{
@@ -462,36 +467,15 @@ class DanceFloor extends Component {
                 >
                   {keyCodeToString(key)}
                 </span>
-              ))
-            : "skip"}
+              ))}
+          </div>
         </div>
-        <div
-          style={{
-            width: `${CONFIG.GUIDE_CONTAINER_WIDTH + CONFIG.GUIDE_WIDTH}px`,
-            height: "60px",
-            position: "relative",
-            backgroundColor: "silver"
-          }}
-        >
-          <span
-            style={{
-              display: "block",
-              width: `${CONFIG.GUIDE_WIDTH}px`,
-              height: "30px",
-              backgroundColor: CONFIG.COLOR[currentHitType],
-              borderRadius: "50%",
-              position: "absolute",
-              top: "15px",
-              left: `${guideOffset}px`
-            }}
-          />
-        </div>
-        <div>
+        <div className="hit-text">
           {solutionSequence[currentSequenceIndex]
             ? resultSequence[currentSequenceIndex]
             : resultSequence[currentSequenceIndex - 1]}
         </div>
-        {!isSongReady ? "Loading..." : <div>Ready</div>}
+        {!isSongReady && <div className="loading-screen">Loading...</div>}
       </div>
     );
   }

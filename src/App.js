@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./App.css";
 import DanceFloor from "./components/DanceFloor";
 import GameLobby from "./components/GameLobby";
 
