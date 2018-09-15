@@ -153,11 +153,11 @@ class DanceFloor extends Component {
     const numberOfSequenceNeeded =
       Math.floor(duration / interval) - skippedInterval;
     // determine the number of sequence/solution per level
-    // there are 5 levels which are level 5, 6, 7, 8, 9
-    const numberOfSequencePerLevel = Math.floor(numberOfSequenceNeeded / 5);
+    // there are 9 levels which are level 1, 2, 3, 4, 5, 6, 7, 8, 9
+    const numberOfSequencePerLevel = Math.floor(numberOfSequenceNeeded / 9);
 
     // create sequence using randomizer
-    let currentLevel = 5;
+    let currentLevel = 1;
     let numberOfSequenceOnCurrentLevel = 0;
     let sequenceInserted = 0;
     for (let i = 0; i < numberOfSequenceNeeded; i++) {
@@ -259,6 +259,7 @@ class DanceFloor extends Component {
         this.setState(
           produce(draft => {
             draft.resultSequence[currentSequenceIndex] = CONFIG.HIT_TYPE.MISS;
+            draft.perfectStreak = 0;
           })
         );
       }
@@ -382,10 +383,6 @@ class DanceFloor extends Component {
         }
         break;
       case CONFIG.KEYS_CODE.SPACE:
-        console.log(
-          solutionSequence[currentSequenceIndex].toString(),
-          newPressedKeys.toString()
-        );
         if (
           solutionSequence[currentSequenceIndex] &&
           solutionSequence[currentSequenceIndex].toString() ===
