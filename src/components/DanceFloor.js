@@ -1,16 +1,14 @@
 import React, { Component } from "react";
 import Youtube from "react-youtube";
 
-const guideContainerWidth = 300;
-const guideWidth = 30;
-
+const GUIDE_CONTAINER_WIDTH = 300;
+const GUIDE_WIDTH = 30;
 const HIT_TYPE = {
   MISS: "MISS",
   BAD: "BAD",
   COOL: "COOL",
   PERFECT: "PERFECT"
 };
-
 const COLOR = {
   MISS: "grey",
   BAD: "pink",
@@ -40,24 +38,31 @@ class DanceFloor extends Component {
   componentDidMount() {
     const { interval } = this.state;
 
+    // timestamp when requestAnimationFrame
+    // callback called for the first time
     this.animationStart = null;
+    // reference to next requestAnimationFrame
+    // callback incase we need to cancel it
     this.animationFrame = null;
-    this.badWindow = {};
-    this.coolWindow = {};
-    this.perfectWindow = {};
 
+    // timing window for space key press
+    // illustration: xxxxxxxbbccppccbbxx
+    // where x = miss, b = bad, c = cool, p = perfect
+    this.badWindow = {};
     this.badWindow.duration =
-      ((guideWidth * 2.5) / guideContainerWidth) * interval;
+      ((GUIDE_WIDTH * 2.5) / GUIDE_CONTAINER_WIDTH) * interval;
     this.badWindow.start = interval * 1.75 - this.badWindow.duration / 2;
     this.badWindow.end = this.badWindow.start + this.badWindow.duration;
 
+    this.coolWindow = {};
     this.coolWindow.duration =
-      ((guideWidth * 1.5) / guideContainerWidth) * interval;
+      ((GUIDE_WIDTH * 1.5) / GUIDE_CONTAINER_WIDTH) * interval;
     this.coolWindow.start = interval * 1.75 - this.coolWindow.duration / 2;
     this.coolWindow.end = this.coolWindow.start + this.coolWindow.duration;
 
+    this.perfectWindow = {};
     this.perfectWindow.duration =
-      ((guideWidth * 0.5) / guideContainerWidth) * interval;
+      ((GUIDE_WIDTH * 0.5) / GUIDE_CONTAINER_WIDTH) * interval;
     this.perfectWindow.start =
       interval * 1.75 - this.perfectWindow.duration / 2;
     this.perfectWindow.end =
@@ -99,8 +104,9 @@ class DanceFloor extends Component {
   startGame = () => {
     const { song } = this.props;
 
-    setTimeout(() => this.youtubePlayer.playVideo(), song.delay);
     this.startGuide();
+    setTimeout(() => this.youtubePlayer.playVideo(), song.delay);
+    // add some delay to match the song beat with our timing window
   };
 
   stopGame = () => {
@@ -128,41 +134,60 @@ class DanceFloor extends Component {
       this.animationStart = timestamp;
     }
     const timePassed = timestamp - this.animationStart;
-    // position the guide based on interval
+
+    // update guide (left) offset on DOM based on interval
     const guideOffset =
-      ((timePassed % interval) / interval) * guideContainerWidth;
+      ((timePassed % interval) / interval) * GUIDE_CONTAINER_WIDTH;
     this.setState({ guideOffset });
 
+    // timing window for space key press
+    // illustration: xxxxxxxbbccppccbbxx
+    // where x = miss, b = bad, c = cool, p = perfect, o = guide/cursor
     const guidePosition = timePassed % (interval * 2);
     if (
       guidePosition > this.badWindow.start &&
       guidePosition < this.coolWindow.start
     ) {
+      // illustration: xxxxxxxbbccppccbbxx
+      //                      o
       this.setState({ currentHitType: HIT_TYPE.BAD });
     } else if (
       guidePosition > this.coolWindow.start &&
       guidePosition < this.perfectWindow.start
     ) {
+      // illustration: xxxxxxxbbccppccbbxx
+      //                        o
       this.setState({ currentHitType: HIT_TYPE.COOL });
     } else if (
       guidePosition > this.perfectWindow.start &&
       guidePosition < this.perfectWindow.end
     ) {
+      // illustration: xxxxxxxbbccppccbbxx
+      //                          o
       this.setState({ currentHitType: HIT_TYPE.PERFECT });
     } else if (
       guidePosition > this.perfectWindow.end &&
       guidePosition < this.coolWindow.end
     ) {
+      // illustration: xxxxxxxbbccppccbbxx
+      //                            o
       this.setState({ currentHitType: HIT_TYPE.COOL });
     } else if (
       guidePosition > this.coolWindow.end &&
       guidePosition < this.badWindow.end
     ) {
+      // illustration: xxxxxxxbbccppccbbxx
+      //                              o
       this.setState({ currentHitType: HIT_TYPE.BAD });
     } else if (
       guidePosition < this.badWindow.start ||
       guidePosition > this.badWindow.end
     ) {
+      // illustration: xxxxxxxbbccppccbbxx
+      //                   o
+      // or
+      // illustration: xxxxxxxbbccppccbbxx
+      //                                o
       this.setState({ currentHitType: HIT_TYPE.MISS });
     }
 
@@ -195,7 +220,7 @@ class DanceFloor extends Component {
         </div>
         <div
           style={{
-            width: `${guideContainerWidth + guideWidth}px`,
+            width: `${GUIDE_CONTAINER_WIDTH + GUIDE_WIDTH}px`,
             height: "60px",
             position: "relative",
             backgroundColor: "silver"
@@ -204,7 +229,7 @@ class DanceFloor extends Component {
           <span
             style={{
               display: "block",
-              width: `${guideWidth}px`,
+              width: `${GUIDE_WIDTH}px`,
               height: "30px",
               backgroundColor: COLOR[currentHitType],
               borderRadius: "50%",
