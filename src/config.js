@@ -17,6 +17,28 @@ export default {
     COOL: "COOL",
     PERFECT: "PERFECT"
   },
+  HIT_MESSAGE: {
+    MISS: [
+      "okay.. you MISS",
+      "MISS.. but keep trying!",
+      "MISS, what a surprise"
+    ],
+    BAD: [
+      "are you okay with being BAD?",
+      "BAD, but it's okay..",
+      "everyone has their BAD time"
+    ],
+    COOL: [
+      "don't fool with the COOL",
+      "you're too COOL for this game",
+      "keep calm and stay COOL"
+    ],
+    PERFECT: [
+      "that's a perfect 10 for you!",
+      "how does it feel to be PERFECT?",
+      "nobody's PERFECT, except you."
+    ]
+  },
   COLOR: {
     MISS: "grey",
     BAD: "pink",

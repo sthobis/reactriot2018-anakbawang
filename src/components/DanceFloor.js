@@ -484,12 +484,28 @@ class DanceFloor extends Component {
                 </span>
               ))}
           </div>
-        </div>
-        <div className="hit-text">
-          {solutionSequence[currentSequenceIndex] &&
-          resultSequence[currentSequenceIndex] === CONFIG.HIT_TYPE.PERFECT
-            ? `${resultSequence[currentSequenceIndex]}x${perfectStreak}`
-            : resultSequence[currentSequenceIndex]}
+          <div className="hit-text">
+            {solutionSequence[currentSequenceIndex] ? (
+              resultSequence[currentSequenceIndex] ? (
+                resultSequence[currentSequenceIndex] ===
+                CONFIG.HIT_TYPE.PERFECT ? (
+                  <span>{`${
+                    CONFIG.HIT_MESSAGE[resultSequence[currentSequenceIndex]][
+                      currentSequenceIndex % 3
+                    ]
+                  } x${perfectStreak} COMBO`}</span>
+                ) : (
+                  <span>
+                    {
+                      CONFIG.HIT_MESSAGE[resultSequence[currentSequenceIndex]][
+                        currentSequenceIndex % 3
+                      ]
+                    }
+                  </span>
+                )
+              ) : null
+            ) : null}
+          </div>
         </div>
         {!isSongReady && <div className="loading-screen">Loading...</div>}
       </div>
