@@ -1,0 +1,130 @@
+.lobby {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("https://media.giphy.com/media/26BkNqoThnP4sDG0g/giphy.gif");
+  background-size: contain;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lobby .help {
+  position: absolute;
+  top: 15px;
+  left: 50px;
+  right: 50px;
+  font-size: 30px;
+  line-height: 1.25;
+}
+
+.lobby .selection {
+  width: 50%;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: stretch;
+  margin: 50px 0 0 0;
+}
+
+.lobby .selection .song {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.lobby .selection .song + .song {
+  margin-top: 20px;
+}
+
+.lobby .selection .song.active button {
+  color: orangered;
+}
+
+.lobby .selection .song span {
+  display: block;
+  font-size: 50px;
+  margin: 0 10px 0 0;
+}
+
+.lobby .selection .song button {
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  background-color: #fff;
+  border: 6px solid #111;
+  padding: 15px 20px;
+  line-height: 1.75;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.lobby .preview {
+  width: 50%;
+  padding: 50px;
+  position: relative;
+  margin: 50px 0 0 0;
+}
+
+.lobby .preview .youtube {
+  position: relative;
+  display: block;
+  padding-top: 50%;
+  padding-bottom: 100px;
+  height: 0;
+  overflow: hidden;
+  background-color: #fff;
+  border: 10px solid #111;
+}
+
+.lobby .preview .youtube::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 60px);
+  background-color: #111;
+  opacity: 0.15;
+  background: url("../images/static.gif");
+  background-size: cover;
+  background-position: center;
+}
+
+.lobby .preview .youtube iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 60px);
+  background-color: #111;
+  border-bottom: 10px solid #111;
+}
+
+.lobby .preview marquee {
+  position: absolute;
+  bottom: 80px;
+  left: 60px;
+  right: 60px;
+  width: calc(100% - 120px);
+  text-transform: uppercase;
+}
+
+.lobby .credit {
+  position: absolute;
+  left: 50px;
+  bottom: 20px;
+}
+
+.lobby .credit a,
+.lobby .credit a:visited {
+  display: inline-block;
+  text-decoration: none;
+  color: #111;
+  padding: 0 0 5px 0;
+  border-bottom: 3px solid #111;
+}

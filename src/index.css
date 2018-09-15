@@ -8,3 +8,34 @@ body {
   box-sizing: border-box;
   font-family: "Press Start 2P", cursive;
 }
+
+#hackbit-vote-widget .hb-vote-widget {
+  position: fixed;
+  bottom: 30px;
+  right: 50px;
+  background: transparent;
+  padding: 0;
+  text-shadow: none;
+  display: flex;
+  align-items: center;
+}
+
+#hackbit-vote-widget .hb-vote-widget a.hb-link {
+  color: #111;
+}
+
+#hackbit-vote-widget .hb-vote-widget a.hb-vote-btn {
+  background-color: #111;
+  color: #fff;
+  border: 4px solid #fff;
+  border-radius: 0;
+  padding: 8px 8px 6px 8px;
+  margin: 0 0 0 15px;
+}
+
+#hackbit-vote-widget .hb-vote-widget a.hb-vote-btn:hover {
+  box-shadow: none;
+  background-color: #fff;
+  color: #111;
+  border: 4px solid #111;
+}

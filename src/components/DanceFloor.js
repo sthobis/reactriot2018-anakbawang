@@ -351,6 +351,7 @@ class DanceFloor extends Component {
   };
 
   handleKeyDown = e => {
+    const { goToLobby } = this.props;
     const {
       solutionSequence,
       currentSequenceIndex,
@@ -411,6 +412,9 @@ class DanceFloor extends Component {
             })
           );
         }
+        break;
+      case CONFIG.KEYS_CODE.ESC:
+        goToLobby();
         break;
       default:
         break;
@@ -554,7 +558,7 @@ class DanceFloor extends Component {
                 </tr>
               </tbody>
             </table>
-            <button onClick={goToLobby}>Go to lobby</button>
+            <button onClick={goToLobby}>Go to lobby (Esc)</button>
           </div>
         )}
         {!isSongReady && <div className="loading-screen">Loading...</div>}

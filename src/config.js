@@ -49,27 +49,19 @@ export default {
   ARROW_KEYS: [KEYS_CODE.UP, KEYS_CODE.DOWN, KEYS_CODE.LEFT, KEYS_CODE.RIGHT],
   SONG_LIST: [
     {
-      title: "So Eun Lee - Loving You",
-      youtubeId: "F5cReku6iZg",
-      bpm: 72,
-      previewStartAt: 83,
-      delay: 0,
-      skipInterval: 8
+      title: "Audition - Euro 2005",
+      youtubeId: "e00_z9cvdEQ",
+      bpm: 138,
+      previewStartAt: 29,
+      delay: 1600,
+      skipInterval: 2
     },
     {
       title: "Audition Days - Canon Groove",
       youtubeId: "N1frS_LWy24",
       bpm: 105,
       previewStartAt: 23,
-      delay: 1410,
-      skipInterval: 10
-    },
-    {
-      title: "Audition - Euro 2005",
-      youtubeId: "e00_z9cvdEQ",
-      bpm: 138,
-      previewStartAt: 29,
-      delay: 1600,
+      delay: 2100,
       skipInterval: 2
     }
   ]

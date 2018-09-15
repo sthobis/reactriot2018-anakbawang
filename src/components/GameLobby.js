@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Youtube from "react-youtube";
 import CONFIG from "../config";
+import "../styles/GameLobby.css";
 
 class GameLobby extends Component {
   state = {
@@ -49,28 +50,56 @@ class GameLobby extends Component {
     const { selectedSongIndex } = this.state;
 
     return (
-      <div>
-        Game Lobby!
-        <div>
+      <div className="lobby">
+        <p className="help">
+          Use Arrows to select song.
+          <br />
+          Press Enter to play.
+        </p>
+        <div className="selection">
           {CONFIG.SONG_LIST.map((song, index) => (
-            <div key={CONFIG.SONG_LIST[index].youtubeId}>
-              <button onClick={() => handleChangeSong(CONFIG.SONG_LIST[index])}>
-                {song.title} ({song.bpm} bpm)
+            <div
+              key={CONFIG.SONG_LIST[index].youtubeId}
+              className={`song${selectedSongIndex === index ? " active" : ""}`}
+            >
+              {selectedSongIndex === index && <span>{">"}</span>}
+              <button
+                onClick={() => handleChangeSong(CONFIG.SONG_LIST[index])}
+                onMouseOver={() => this.setState({ selectedSongIndex: index })}
+              >
+                {song.title}
+                <br />
+                {song.bpm} bpm
               </button>
             </div>
           ))}
         </div>
-        <Youtube
-          videoId={CONFIG.SONG_LIST[selectedSongIndex].youtubeId}
-          opts={{
-            height: "390",
-            width: "640",
-            playerVars: {
-              autoplay: 1,
-              start: CONFIG.SONG_LIST[selectedSongIndex].previewStartAt
-            }
-          }}
-        />
+        <div className="preview">
+          <Youtube
+            videoId={CONFIG.SONG_LIST[selectedSongIndex].youtubeId}
+            containerClassName="youtube"
+            opts={{
+              height: "100%",
+              width: "100%",
+              playerVars: {
+                autoplay: 1,
+                start: CONFIG.SONG_LIST[selectedSongIndex].previewStartAt,
+                loop: 1,
+                playlist: CONFIG.SONG_LIST[selectedSongIndex].youtubeId,
+                controls: 0,
+                disablekb: 1,
+                showinfo: 0
+              }
+            }}
+          />
+          <marquee>{`${CONFIG.SONG_LIST[selectedSongIndex].title} (${
+            CONFIG.SONG_LIST[selectedSongIndex].bpm
+          } BPM)`}</marquee>
+        </div>
+        <p className="credit">
+          Made by <a href="https://github.com/sthobis">@sthobis</a> and{" "}
+          <a href="https://github.com/ajiajikasmaji">@ajiajikasmaji</a>.
+        </p>
       </div>
     );
   }
