@@ -1,19 +1,32 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import produce from "immer";
+import React, { Component } from "react";
+import "./App.css";
+import DanceFloor from "./components/DanceFloor";
+import GameLobby from "./components/GameLobby";
 
 class App extends Component {
+  state = {
+    readyToPlay: true,
+    song: {
+      title: "Audition Days - Canon Groove",
+      youtubeId: "N1frS_LWy24",
+      bpm: 105
+    }
+  };
+
+  handleStateChange = (key, value, cb) => {
+    this.setState(
+      produce(draft => {
+        draft[key] = value;
+      }),
+      cb
+    );
+  };
+
   render() {
+    const { readyToPlay, song } = this.state;
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <div>{!readyToPlay ? <GameLobby /> : <DanceFloor song={song} />}</div>
     );
   }
 }
