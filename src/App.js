@@ -6,7 +6,7 @@ import GameLobby from "./components/GameLobby";
 
 class App extends Component {
   state = {
-    readyToPlay: true,
+    readyToPlay: false,
     song: {
       title: "Audition Days - Canon Groove",
       youtubeId: "N1frS_LWy24",
@@ -24,10 +24,20 @@ class App extends Component {
     );
   };
 
+  handleSongChange = song => {
+    this.setState({ readyToPlay: true, song });
+  };
+
   render() {
     const { readyToPlay, song } = this.state;
     return (
-      <div>{!readyToPlay ? <GameLobby /> : <DanceFloor song={song} />}</div>
+      <div>
+        {!readyToPlay ? (
+          <GameLobby onSongChange={this.handleSongChange} />
+        ) : (
+          <DanceFloor song={song} />
+        )}
+      </div>
     );
   }
 }
