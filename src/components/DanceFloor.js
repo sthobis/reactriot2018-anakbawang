@@ -1,36 +1,7 @@
 import produce from "immer";
 import React, { Component } from "react";
 import Youtube from "react-youtube";
-
-const GUIDE_CONTAINER_WIDTH = 300;
-const GUIDE_WIDTH = 30;
-const HIT_TYPE = {
-  MISS: "MISS",
-  BAD: "BAD",
-  COOL: "COOL",
-  PERFECT: "PERFECT"
-};
-const COLOR = {
-  MISS: "grey",
-  BAD: "pink",
-  COOL: "lightblue",
-  PERFECT: "mediumpurple"
-};
-const KEYS_CODE = {
-  ENTER: 13,
-  ESC: 27,
-  SPACE: 32,
-  LEFT: 37,
-  UP: 38,
-  RIGHT: 39,
-  DOWN: 40
-};
-const ARROW_KEYS = [
-  KEYS_CODE.UP,
-  KEYS_CODE.DOWN,
-  KEYS_CODE.LEFT,
-  KEYS_CODE.RIGHT
-];
+import CONFIG from "../config";
 
 const keyCodeToString = key => {
   if (key === 37) return "◀";
@@ -67,7 +38,7 @@ class DanceFloor extends Component {
     resultSequence: [],
 
     pressedKeys: [],
-    currentHitType: HIT_TYPE.MISS
+    currentHitType: CONFIG.HIT_TYPE.MISS
   };
 
   // timestamp when requestAnimationFrame
@@ -138,17 +109,17 @@ class DanceFloor extends Component {
     // illustration: xxxxxxxbbccppccbbxx
     // where x = miss, b = bad, c = cool, p = perfect
     this.badWindow.duration =
-      ((GUIDE_WIDTH * 2.5) / GUIDE_CONTAINER_WIDTH) * interval;
+      ((CONFIG.GUIDE_WIDTH * 2.5) / CONFIG.GUIDE_CONTAINER_WIDTH) * interval;
     this.badWindow.start = interval * 0.75 - this.badWindow.duration / 2;
     this.badWindow.end = this.badWindow.start + this.badWindow.duration;
 
     this.coolWindow.duration =
-      ((GUIDE_WIDTH * 1.5) / GUIDE_CONTAINER_WIDTH) * interval;
+      ((CONFIG.GUIDE_WIDTH * 1.5) / CONFIG.GUIDE_CONTAINER_WIDTH) * interval;
     this.coolWindow.start = interval * 0.75 - this.coolWindow.duration / 2;
     this.coolWindow.end = this.coolWindow.start + this.coolWindow.duration;
 
     this.perfectWindow.duration =
-      ((GUIDE_WIDTH * 0.5) / GUIDE_CONTAINER_WIDTH) * interval;
+      ((CONFIG.GUIDE_WIDTH * 0.5) / CONFIG.GUIDE_CONTAINER_WIDTH) * interval;
     this.perfectWindow.start =
       interval * 0.75 - this.perfectWindow.duration / 2;
     this.perfectWindow.end =
@@ -165,16 +136,19 @@ class DanceFloor extends Component {
     // beginning: custom per song
     // end: 4 interval
     const skippedInterval = song.skipInterval + 4;
+
     const solutionSequence = [];
     for (let i = 0; i < skippedInterval; i++) {
       solutionSequence.push(null);
     }
 
-    // determine the number of sequence that
+    // determine the total number of sequence that
     // need to completed by player
+    // divide it by 2 because we have resting interval
+    // in between input/sequence interval
     const numberOfSequenceNeeded =
-      (Math.floor(duration / interval) - song.skipInterval - 4) / 2;
-    // determine the number of sequence per level
+      (Math.floor(duration / interval) - skippedInterval) / 2;
+    // determine the number of sequence/solution per level
     // there are 5 levels which are level 6, 7, 8, 9, 10
     const numberOfSequencePerLevel = Math.floor(numberOfSequenceNeeded / 5);
 
@@ -184,43 +158,36 @@ class DanceFloor extends Component {
     let sequenceInserted = 0;
     for (let i = 0; i < numberOfSequenceNeeded; i++) {
       if (numberOfSequenceOnCurrentLevel < numberOfSequencePerLevel) {
-        let sequence = [];
-        for (let j = 0; j < currentLevel; j++) {
-          sequence.push(
-            ARROW_KEYS[Math.floor(Math.random() * ARROW_KEYS.length)]
-          );
-        }
-        sequence.push(KEYS_CODE.SPACE);
-        solutionSequence.splice(
-          song.skipInterval + sequenceInserted,
-          0,
-          sequence,
-          null
-        );
         numberOfSequenceOnCurrentLevel++;
-        sequenceInserted += 2;
       } else {
+        numberOfSequenceOnCurrentLevel = 1;
         if (currentLevel < 10) {
           currentLevel++;
         }
-        let sequence = [];
-        for (let j = 0; j < currentLevel; j++) {
-          sequence.push(
-            ARROW_KEYS[Math.floor(Math.random() * ARROW_KEYS.length)]
-          );
-        }
-        sequence.push(KEYS_CODE.SPACE);
-        solutionSequence.splice(
-          song.skipInterval + sequenceInserted,
-          0,
-          sequence,
-          null
-        );
-        numberOfSequenceOnCurrentLevel = 1;
-        sequenceInserted += 2;
       }
+      let sequence = [];
+      // create an array of arrow keys with length = currentLevel
+      for (let j = 0; j < currentLevel; j++) {
+        sequence.push(
+          CONFIG.ARROW_KEYS[
+            Math.floor(Math.random() * CONFIG.ARROW_KEYS.length)
+          ]
+        );
+      }
+      // put space key in the end of array
+      sequence.push(CONFIG.KEYS_CODE.SPACE);
+      // update solution with created sequence puzzle
+      solutionSequence.splice(
+        song.skipInterval + sequenceInserted,
+        0,
+        sequence,
+        null
+      );
+      sequenceInserted += 2;
     }
 
+    // define result sequence filled with
+    // unassigned value (to be filled with user submission)
     const resultSequence = Array(solutionSequence.length).fill(null);
     this.setState({ solutionSequence, resultSequence });
   };
@@ -229,8 +196,8 @@ class DanceFloor extends Component {
     const { song } = this.props;
 
     this.startAnimation();
-    setTimeout(() => this.youtubePlayer.playVideo(), song.delay);
     // add some delay to match the song beat with our timing window
+    setTimeout(() => this.youtubePlayer.playVideo(), song.delay);
   };
 
   stopGame = () => {
@@ -247,6 +214,7 @@ class DanceFloor extends Component {
     this.animationStart = null;
     this.animationFrame = null;
 
+    // show game results
     this.printResult();
   };
 
@@ -284,7 +252,7 @@ class DanceFloor extends Component {
         // marked as miss and move to next sequence
         this.setState(
           produce(draft => {
-            draft.resultSequence[currentSequenceIndex] = HIT_TYPE.MISS;
+            draft.resultSequence[currentSequenceIndex] = CONFIG.HIT_TYPE.MISS;
             draft.currentSequenceIndex = newSequenceIndex;
           })
         );
@@ -312,7 +280,7 @@ class DanceFloor extends Component {
     const { interval } = this.state;
 
     const guideOffset =
-      ((timePassed % interval) / interval) * GUIDE_CONTAINER_WIDTH;
+      ((timePassed % interval) / interval) * CONFIG.GUIDE_CONTAINER_WIDTH;
     this.setState({ guideOffset });
   };
 
@@ -325,42 +293,42 @@ class DanceFloor extends Component {
     const guidePosition = timePassed % interval;
 
     if (!solutionSequence[currentSequenceIndex]) {
-      this.setState({ currentHitType: HIT_TYPE.MISS });
+      this.setState({ currentHitType: CONFIG.HIT_TYPE.MISS });
     } else if (
       guidePosition > this.badWindow.start &&
       guidePosition < this.coolWindow.start
     ) {
       // illustration: xxxxxxxbbccppccbbxx
       //                      o
-      this.setState({ currentHitType: HIT_TYPE.BAD });
+      this.setState({ currentHitType: CONFIG.HIT_TYPE.BAD });
     } else if (
       guidePosition > this.coolWindow.start &&
       guidePosition < this.perfectWindow.start
     ) {
       // illustration: xxxxxxxbbccppccbbxx
       //                        o
-      this.setState({ currentHitType: HIT_TYPE.COOL });
+      this.setState({ currentHitType: CONFIG.HIT_TYPE.COOL });
     } else if (
       guidePosition > this.perfectWindow.start &&
       guidePosition < this.perfectWindow.end
     ) {
       // illustration: xxxxxxxbbccppccbbxx
       //                          o
-      this.setState({ currentHitType: HIT_TYPE.PERFECT });
+      this.setState({ currentHitType: CONFIG.HIT_TYPE.PERFECT });
     } else if (
       guidePosition > this.perfectWindow.end &&
       guidePosition < this.coolWindow.end
     ) {
       // illustration: xxxxxxxbbccppccbbxx
       //                            o
-      this.setState({ currentHitType: HIT_TYPE.COOL });
+      this.setState({ currentHitType: CONFIG.HIT_TYPE.COOL });
     } else if (
       guidePosition > this.coolWindow.end &&
       guidePosition < this.badWindow.end
     ) {
       // illustration: xxxxxxxbbccppccbbxx
       //                              o
-      this.setState({ currentHitType: HIT_TYPE.BAD });
+      this.setState({ currentHitType: CONFIG.HIT_TYPE.BAD });
     } else if (
       guidePosition < this.badWindow.start ||
       guidePosition > this.badWindow.end
@@ -370,7 +338,7 @@ class DanceFloor extends Component {
       // or
       // illustration: xxxxxxxbbccppccbbxx
       //                                o
-      this.setState({ currentHitType: HIT_TYPE.MISS });
+      this.setState({ currentHitType: CONFIG.HIT_TYPE.MISS });
     }
   };
 
@@ -384,10 +352,10 @@ class DanceFloor extends Component {
     let newPressedKeys = pressedKeys.slice();
 
     switch (e.which) {
-      case KEYS_CODE.UP:
-      case KEYS_CODE.DOWN:
-      case KEYS_CODE.LEFT:
-      case KEYS_CODE.RIGHT:
+      case CONFIG.KEYS_CODE.UP:
+      case CONFIG.KEYS_CODE.DOWN:
+      case CONFIG.KEYS_CODE.LEFT:
+      case CONFIG.KEYS_CODE.RIGHT:
         newPressedKeys.push(e.which);
         if (
           solutionSequence[currentSequenceIndex] &&
@@ -404,8 +372,8 @@ class DanceFloor extends Component {
           this.setState({ pressedKeys: [] });
         }
         break;
-      case KEYS_CODE.SPACE:
-        newPressedKeys.push(KEYS_CODE.SPACE);
+      case CONFIG.KEYS_CODE.SPACE:
+        newPressedKeys.push(CONFIG.KEYS_CODE.SPACE);
         if (
           solutionSequence[currentSequenceIndex] &&
           solutionSequence[currentSequenceIndex]
@@ -426,7 +394,7 @@ class DanceFloor extends Component {
           this.setState(
             produce(draft => {
               draft.pressedKeys = [];
-              draft.resultSequence[currentSequenceIndex] = HIT_TYPE.MISS;
+              draft.resultSequence[currentSequenceIndex] = CONFIG.HIT_TYPE.MISS;
             })
           );
         }
@@ -499,7 +467,7 @@ class DanceFloor extends Component {
         </div>
         <div
           style={{
-            width: `${GUIDE_CONTAINER_WIDTH + GUIDE_WIDTH}px`,
+            width: `${CONFIG.GUIDE_CONTAINER_WIDTH + CONFIG.GUIDE_WIDTH}px`,
             height: "60px",
             position: "relative",
             backgroundColor: "silver"
@@ -508,9 +476,9 @@ class DanceFloor extends Component {
           <span
             style={{
               display: "block",
-              width: `${GUIDE_WIDTH}px`,
+              width: `${CONFIG.GUIDE_WIDTH}px`,
               height: "30px",
-              backgroundColor: COLOR[currentHitType],
+              backgroundColor: CONFIG.COLOR[currentHitType],
               borderRadius: "50%",
               position: "absolute",
               top: "15px",

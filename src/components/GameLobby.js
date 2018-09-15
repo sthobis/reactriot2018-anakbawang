@@ -1,34 +1,6 @@
 import React, { Component } from "react";
 import Youtube from "react-youtube";
-
-const KEYS_CODE = {
-  ENTER: 13,
-  ESC: 27,
-  SPACE: 32,
-  LEFT: 37,
-  UP: 38,
-  RIGHT: 39,
-  DOWN: 40
-};
-
-const songList = [
-  {
-    title: "So Eun Lee - Loving You",
-    youtubeId: "F5cReku6iZg",
-    bpm: 72,
-    previewStartAt: 83,
-    delay: 0,
-    skipInterval: 8
-  },
-  {
-    title: " Audition Days - Canon Groove",
-    youtubeId: "N1frS_LWy24",
-    bpm: 105,
-    previewStartAt: 23,
-    delay: 1410,
-    skipInterval: 10
-  }
-];
+import CONFIG from "../config";
 
 class GameLobby extends Component {
   state = {
@@ -40,22 +12,21 @@ class GameLobby extends Component {
     const { selectedSongIndex } = this.state;
 
     switch (e.which) {
-      case KEYS_CODE.UP:
-        console.log("up");
+      case CONFIG.KEYS_CODE.UP:
         this.setState(state => ({
           selectedSongIndex:
-            (state.selectedSongIndex + songList.length - 1) % songList.length
+            (state.selectedSongIndex + CONFIG.SONG_LIST.length - 1) %
+            CONFIG.SONG_LIST.length
         }));
         break;
-      case KEYS_CODE.DOWN:
-        console.log("down");
+      case CONFIG.KEYS_CODE.DOWN:
         this.setState(state => ({
-          selectedSongIndex: (state.selectedSongIndex + 1) % songList.length
+          selectedSongIndex:
+            (state.selectedSongIndex + 1) % CONFIG.SONG_LIST.length
         }));
         break;
-      case KEYS_CODE.ENTER:
-        console.log(songList[this.state.selectedSongIndex]);
-        this.props.handleChangeSong(songList[this.state.selectedSongIndex]);
+      case CONFIG.KEYS_CODE.ENTER:
+        handleChangeSong(CONFIG.SONG_LIST[selectedSongIndex]);
         break;
       default:
         break;
@@ -81,22 +52,22 @@ class GameLobby extends Component {
       <div>
         Game Lobby!
         <div>
-          {songList.map((song, index) => (
-            <div key={songList[index].youtubeId}>
-              <button onClick={() => handleChangeSong(songList[index])}>
+          {CONFIG.SONG_LIST.map((song, index) => (
+            <div key={CONFIG.SONG_LIST[index].youtubeId}>
+              <button onClick={() => handleChangeSong(CONFIG.SONG_LIST[index])}>
                 {song.title} ({song.bpm} bpm)
               </button>
             </div>
           ))}
         </div>
         <Youtube
-          videoId={songList[selectedSongIndex].youtubeId}
+          videoId={CONFIG.SONG_LIST[selectedSongIndex].youtubeId}
           opts={{
             height: "390",
             width: "640",
             playerVars: {
               autoplay: 1,
-              start: songList[selectedSongIndex].previewStartAt
+              start: CONFIG.SONG_LIST[selectedSongIndex].previewStartAt
             }
           }}
         />
