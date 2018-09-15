@@ -9,7 +9,7 @@ class App extends Component {
     song: null
   };
 
-  handleSongChange = song => {
+  handleChangeSong = song => {
     this.setState({ readyToPlay: true, song });
   };
 
