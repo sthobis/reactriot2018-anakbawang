@@ -6,7 +6,7 @@ import GameLobby from "./components/GameLobby";
 class App extends Component {
   state = {
     readyToPlay: false,
-    song: null
+    song: undefined
   };
 
   handleChangeSong = song => {
