@@ -1,38 +1,39 @@
 import produce from "immer";
 import React, { Component } from "react";
 import Youtube from "react-youtube";
+import ArrowDown from "../components/ArrowDown";
+import ArrowLeft from "../components/ArrowLeft";
+import ArrowRight from "../components/ArrowRight";
+import ArrowUp from "../components/ArrowUp";
 import CONFIG from "../config";
 import "../styles/DanceFloor.css";
 
-const keyCodeToString = key => {
-  if (key === 37) return "◀";
-  else if (key === 38) return "▲";
-  else if (key === 39) return "▶";
-  else if (key === 40) return "▼";
-  else return "⟳";
+const keyCodeToComponent = key => {
+  if (key === 37) return <ArrowLeft />;
+  else if (key === 38) return <ArrowUp />;
+  else if (key === 39) return <ArrowRight />;
+  else if (key === 40) return <ArrowDown />;
+  else return null;
 };
 
 class DanceFloor extends Component {
   static defaultProps = {
-    song: CONFIG.SONG_LIST[1]
+    song: CONFIG.SONG_LIST[2]
   };
 
-  // interval: https://github.com/Hackbit/reactriot2018-anakbawang/wiki
+  // interval: duration it takes for guide/cursor to reach its original position for 2 times
   state = {
     isSongReady: false,
     isSongFinished: false,
-
     duration: 0,
-    interval: ((60 * 1000) / this.props.song.bpm) * 4,
-
+    interval: ((60 * 1000) / this.props.song.bpm) * 4 * 2,
     guideOffset: 0,
-
     solutionSequence: [],
     currentSequenceIndex: 0,
     resultSequence: [],
-
     pressedKeys: [],
-    currentHitType: CONFIG.HIT_TYPE.MISS
+    currentHitType: CONFIG.HIT_TYPE.MISS,
+    perfectStreak: 0
   };
 
   // timestamp when requestAnimationFrame
@@ -47,8 +48,6 @@ class DanceFloor extends Component {
   perfectWindow = {};
 
   componentDidMount() {
-    // CLASS
-
     // add keydown listener for gameplay
     // arrows + space
     document.addEventListener("keydown", this.handleKeyDown);
@@ -63,9 +62,9 @@ class DanceFloor extends Component {
   }
 
   handleYoutubeReady = event => {
-    // as soon as the player ready
+    // as soon as the player is ready
     // pause the video so it syncs better
-    // with our timer
+    // with our naive timer
     event.target.pauseVideo();
     // save youtube object selector
     // for future access
@@ -92,7 +91,11 @@ class DanceFloor extends Component {
   };
 
   createGameSession = () => {
+    // calculate the timing for when the user
+    // can get bad score, cool score, and perfect score
     this.setTimingWindow();
+    // generate an array of arrow sequence/puzzle
+    // to be solved/played by user
     this.setSolutionSequence();
 
     // everything is ready at this point
@@ -107,19 +110,21 @@ class DanceFloor extends Component {
     // illustration: xxxxxxxbbccppccbbxx
     // where x = miss, b = bad, c = cool, p = perfect
     this.badWindow.duration =
-      ((CONFIG.GUIDE_WIDTH * 2.5) / CONFIG.GUIDE_CONTAINER_WIDTH) * interval;
-    this.badWindow.start = interval * 0.75 - this.badWindow.duration / 2;
+      ((CONFIG.GUIDE_WIDTH * 2.5) / CONFIG.GUIDE_CONTAINER_WIDTH) *
+      (interval / 2);
+    this.badWindow.start = interval / 2 - this.badWindow.duration / 2;
     this.badWindow.end = this.badWindow.start + this.badWindow.duration;
 
     this.coolWindow.duration =
-      ((CONFIG.GUIDE_WIDTH * 1.5) / CONFIG.GUIDE_CONTAINER_WIDTH) * interval;
-    this.coolWindow.start = interval * 0.75 - this.coolWindow.duration / 2;
+      ((CONFIG.GUIDE_WIDTH * 1.5) / CONFIG.GUIDE_CONTAINER_WIDTH) *
+      (interval / 2);
+    this.coolWindow.start = interval / 2 - this.coolWindow.duration / 2;
     this.coolWindow.end = this.coolWindow.start + this.coolWindow.duration;
 
     this.perfectWindow.duration =
-      ((CONFIG.GUIDE_WIDTH * 0.5) / CONFIG.GUIDE_CONTAINER_WIDTH) * interval;
-    this.perfectWindow.start =
-      interval * 0.75 - this.perfectWindow.duration / 2;
+      ((CONFIG.GUIDE_WIDTH * 0.5) / CONFIG.GUIDE_CONTAINER_WIDTH) *
+      (interval / 2);
+    this.perfectWindow.start = interval / 2 - this.perfectWindow.duration / 2;
     this.perfectWindow.end =
       this.perfectWindow.start + this.perfectWindow.duration;
   };
@@ -132,9 +137,12 @@ class DanceFloor extends Component {
     // an interval where no sequence is shown in the period
     // at the beginning, and the end of the song
     // beginning: custom per song
-    // end: 4 interval
-    const skippedInterval = song.skipInterval + 4;
+    // end: 2 interval
+    const skippedInterval = song.skipInterval + 2;
 
+    // fill every skipped interval solution with null
+    // which means at that interval players aren't
+    // needed to solve puzzle
     const solutionSequence = [];
     for (let i = 0; i < skippedInterval; i++) {
       solutionSequence.push(null);
@@ -142,24 +150,27 @@ class DanceFloor extends Component {
 
     // determine the total number of sequence that
     // need to completed by player
-    // divide it by 2 because we have resting interval
-    // in between input/sequence interval
     const numberOfSequenceNeeded =
-      (Math.floor(duration / interval) - skippedInterval) / 2;
+      Math.floor(duration / interval) - skippedInterval;
     // determine the number of sequence/solution per level
-    // there are 5 levels which are level 6, 7, 8, 9, 10
+    // there are 5 levels which are level 5, 6, 7, 8, 9
     const numberOfSequencePerLevel = Math.floor(numberOfSequenceNeeded / 5);
 
     // create sequence using randomizer
-    let currentLevel = 6;
+    let currentLevel = 5;
     let numberOfSequenceOnCurrentLevel = 0;
     let sequenceInserted = 0;
     for (let i = 0; i < numberOfSequenceNeeded; i++) {
       if (numberOfSequenceOnCurrentLevel < numberOfSequencePerLevel) {
+        // we still have quota for current level
+        // create more puzzle for this level
         numberOfSequenceOnCurrentLevel++;
       } else {
+        // we have fulfilled the sequence quota for that level
+        // proceed to make sequence/puzzle for the next level
         numberOfSequenceOnCurrentLevel = 1;
-        if (currentLevel < 10) {
+        // level are maxed at level 9
+        if (currentLevel < 9) {
           currentLevel++;
         }
       }
@@ -172,16 +183,15 @@ class DanceFloor extends Component {
           ]
         );
       }
-      // put space key in the end of array
-      sequence.push(CONFIG.KEYS_CODE.SPACE);
       // update solution with created sequence puzzle
+      // insert puzzle to its correct location on the solution arrray
+      // based on its order of occurance
       solutionSequence.splice(
         song.skipInterval + sequenceInserted,
         0,
-        sequence,
-        null
+        sequence
       );
-      sequenceInserted += 2;
+      sequenceInserted++;
     }
 
     // define result sequence filled with
@@ -194,7 +204,7 @@ class DanceFloor extends Component {
     const { song } = this.props;
 
     this.startAnimation();
-    // add some delay to match the song beat with our timing window
+    // add custom delay to match the song beat with our naive timer
     setTimeout(() => this.youtubePlayer.playVideo(), song.delay);
   };
 
@@ -234,32 +244,30 @@ class DanceFloor extends Component {
     // current timestamp of the song / game duration
     const timePassed = timestamp - this.animationStart;
 
-    // update currentSequenceIndex every interval
-    // to show players which solution they need to solve
-    const newSequenceIndex = Math.floor(timePassed / interval);
-    // go to next sequence
-    if (newSequenceIndex > currentSequenceIndex) {
-      // every interval passed, flush remaining pressedKeys
+    if (timePassed % interval > this.badWindow.end) {
+      // input period for current interval has passed
+      // flush remaining pressedKeys
       this.setState({ pressedKeys: [] });
 
       if (
         solutionSequence[currentSequenceIndex] &&
         !resultSequence[currentSequenceIndex]
       ) {
-        // sequence interval passed and player failed to submit any solution
-        // marked as miss and move to next sequence
+        // input period for current interval has passed
+        // and player failed to submit any solution
+        // mark current sequence as miss on solution array
         this.setState(
           produce(draft => {
             draft.resultSequence[currentSequenceIndex] = CONFIG.HIT_TYPE.MISS;
-            draft.currentSequenceIndex = newSequenceIndex;
           })
         );
-      } else {
-        // sequence interval passed and player did submit a solution
-        // simply move to next sequence
-        this.setState({ currentSequenceIndex: newSequenceIndex });
       }
     }
+
+    // keep updating current sequence index based on time passed
+    // to show players which solution they need to solve at the moment
+    const newSequenceIndex = Math.floor(timePassed / interval);
+    this.setState({ currentSequenceIndex: newSequenceIndex });
 
     // update guide (left) offset on DOM based on
     // time passed since the song started
@@ -278,7 +286,10 @@ class DanceFloor extends Component {
     const { interval } = this.state;
 
     const guideOffset =
-      ((timePassed % interval) / interval) * CONFIG.GUIDE_CONTAINER_WIDTH;
+      (((timePassed % interval) / (interval / 2)) *
+        CONFIG.GUIDE_CONTAINER_WIDTH +
+        CONFIG.GUIDE_CONTAINER_WIDTH * 0.75) %
+      CONFIG.GUIDE_CONTAINER_WIDTH;
     this.setState({ guideOffset });
   };
 
@@ -371,12 +382,14 @@ class DanceFloor extends Component {
         }
         break;
       case CONFIG.KEYS_CODE.SPACE:
-        newPressedKeys.push(CONFIG.KEYS_CODE.SPACE);
+        console.log(
+          solutionSequence[currentSequenceIndex].toString(),
+          newPressedKeys.toString()
+        );
         if (
           solutionSequence[currentSequenceIndex] &&
-          solutionSequence[currentSequenceIndex]
-            .toString()
-            .startsWith(newPressedKeys.toString())
+          solutionSequence[currentSequenceIndex].toString() ===
+            newPressedKeys.toString()
         ) {
           // player complete the correct solution
           // for current sequence
@@ -384,6 +397,12 @@ class DanceFloor extends Component {
             produce(draft => {
               draft.pressedKeys = [];
               draft.resultSequence[currentSequenceIndex] = currentHitType;
+              // if user get's a perfect, update his perfect streak
+              if (currentHitType === CONFIG.HIT_TYPE.PERFECT) {
+                draft.perfectStreak++;
+              } else {
+                draft.perfectStreak = 0;
+              }
             })
           );
         } else {
@@ -411,13 +430,13 @@ class DanceFloor extends Component {
     const { song } = this.props;
     const {
       isSongReady,
-      interval,
       guideOffset,
-      currentHitType,
       solutionSequence,
       resultSequence,
       currentSequenceIndex,
-      pressedKeys
+      pressedKeys,
+      currentHitType,
+      perfectStreak
     } = this.state;
 
     return (
@@ -442,14 +461,17 @@ class DanceFloor extends Component {
           <div
             className="guide"
             style={{
-              width: `${CONFIG.GUIDE_CONTAINER_WIDTH + CONFIG.GUIDE_WIDTH}px`
+              width: `${CONFIG.GUIDE_CONTAINER_WIDTH +
+                CONFIG.GUIDE_WIDTH +
+                12}px`
             }}
           >
             <span
               style={{
                 width: `${CONFIG.GUIDE_WIDTH}px`,
                 height: `${CONFIG.GUIDE_WIDTH}px`,
-                left: `${guideOffset}px`
+                left: `${guideOffset}px`,
+                backgroundColor: CONFIG.COLOR[currentHitType]
               }}
             />
           </div>
@@ -459,21 +481,18 @@ class DanceFloor extends Component {
               solutionSequence[currentSequenceIndex].map((key, i) => (
                 <span
                   key={i}
-                  style={{
-                    fontSize: "24px",
-                    margin: "10px",
-                    color: key === pressedKeys[i] ? "red" : "black"
-                  }}
+                  className={key === pressedKeys[i] ? "pressed" : undefined}
                 >
-                  {keyCodeToString(key)}
+                  {keyCodeToComponent(key)}
                 </span>
               ))}
           </div>
         </div>
         <div className="hit-text">
-          {solutionSequence[currentSequenceIndex]
-            ? resultSequence[currentSequenceIndex]
-            : resultSequence[currentSequenceIndex - 1]}
+          {solutionSequence[currentSequenceIndex] &&
+          resultSequence[currentSequenceIndex] === CONFIG.HIT_TYPE.PERFECT
+            ? `${resultSequence[currentSequenceIndex]}x${perfectStreak}`
+            : resultSequence[currentSequenceIndex]}
         </div>
         {!isSongReady && <div className="loading-screen">Loading...</div>}
       </div>

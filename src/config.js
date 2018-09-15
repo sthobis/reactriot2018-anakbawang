@@ -35,12 +35,20 @@ export default {
       skipInterval: 8
     },
     {
-      title: " Audition Days - Canon Groove",
+      title: "Audition Days - Canon Groove",
       youtubeId: "N1frS_LWy24",
       bpm: 105,
       previewStartAt: 23,
       delay: 1410,
       skipInterval: 10
+    },
+    {
+      title: "Audition - Euro 2005",
+      youtubeId: "e00_z9cvdEQ",
+      bpm: 138,
+      previewStartAt: 29,
+      delay: 0,
+      skipInterval: 2
     }
   ]
 };
