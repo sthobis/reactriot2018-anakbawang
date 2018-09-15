@@ -251,7 +251,12 @@ class DanceFloor extends Component {
   };
 
   updateAnimation = timestamp => {
-    const { interval } = this.state;
+    const {
+      interval,
+      solutionSequence,
+      resultSequence,
+      currentSequenceIndex
+    } = this.state;
 
     // if this is the first frame, save the timestamp
     // as the time of when the song start
@@ -260,12 +265,35 @@ class DanceFloor extends Component {
       this.animationStart = timestamp;
     }
 
+    // current timestamp of the song / game duration
     const timePassed = timestamp - this.animationStart;
 
-    // update currentSequenceIndex
+    // update currentSequenceIndex every interval
     // to show players which solution they need to solve
-    const currentSequenceIndex = Math.floor(timePassed / interval);
-    this.setState({ currentSequenceIndex });
+    const newSequenceIndex = Math.floor(timePassed / interval);
+    // go to next sequence
+    if (newSequenceIndex > currentSequenceIndex) {
+      // every interval passed, flush remaining pressedKeys
+      this.setState({ pressedKeys: [] });
+
+      if (
+        solutionSequence[currentSequenceIndex] &&
+        !resultSequence[currentSequenceIndex]
+      ) {
+        // sequence interval passed and player failed to submit any solution
+        // marked as miss and move to next sequence
+        this.setState(
+          produce(draft => {
+            draft.resultSequence[currentSequenceIndex] = HIT_TYPE.MISS;
+            draft.currentSequenceIndex = newSequenceIndex;
+          })
+        );
+      } else {
+        // sequence interval passed and player did submit a solution
+        // simply move to next sequence
+        this.setState({ currentSequenceIndex: newSequenceIndex });
+      }
+    }
 
     // update guide (left) offset on DOM based on
     // time passed since the song started
@@ -274,7 +302,7 @@ class DanceFloor extends Component {
     // update what kind of hit does the player
     // will get if he press space right now
     // (miss, bad, cool, perfect)
-    this.setCurrentHitType(timePassed, currentSequenceIndex);
+    this.setCurrentHitType(timePassed, newSequenceIndex);
 
     // update continuously until stopped by youtube player (song ended)
     this.animationFrame = window.requestAnimationFrame(this.updateAnimation);
@@ -453,7 +481,8 @@ class DanceFloor extends Component {
           <button onClick={this.stopGame}>Stop Game</button>
         </div>
         <div>
-          {solutionSequence[currentSequenceIndex]
+          {solutionSequence[currentSequenceIndex] &&
+          !resultSequence[currentSequenceIndex]
             ? solutionSequence[currentSequenceIndex].map((key, i) => (
                 <span
                   key={i}
@@ -489,7 +518,11 @@ class DanceFloor extends Component {
             }}
           />
         </div>
-        <div>{resultSequence[currentSequenceIndex]}</div>
+        <div>
+          {solutionSequence[currentSequenceIndex]
+            ? resultSequence[currentSequenceIndex]
+            : resultSequence[currentSequenceIndex - 1]}
+        </div>
         {!isSongReady ? "Loading..." : <div>Ready</div>}
       </div>
     );
