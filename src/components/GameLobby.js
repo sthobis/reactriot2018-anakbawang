@@ -4,8 +4,9 @@ import CONFIG from "../config";
 import "../styles/GameLobby.css";
 import tutorialImage1 from "../images/tutorial-1.png";
 import tutorialImage2 from "../images/tutorial-2.png";
+import sfx from "../audio/sfx.wav";
 
-const AudioSFX = new Audio(CONFIG.SFX);
+const AudioSFX = new Audio(sfx);
 
 class GameLobby extends Component {
   state = {

@@ -7,6 +7,7 @@ import ArrowRight from "../components/ArrowRight";
 import ArrowUp from "../components/ArrowUp";
 import CONFIG from "../config";
 import "../styles/DanceFloor.css";
+import sfx from "../audio/sfx.wav";
 
 const keyCodeToComponent = key => {
   if (key === 37) return <ArrowLeft />;
@@ -16,7 +17,7 @@ const keyCodeToComponent = key => {
   else return null;
 };
 
-const AudioSFX = new Audio(CONFIG.SFX);
+const AudioSFX = new Audio(sfx);
 
 class DanceFloor extends Component {
   static defaultProps = {
