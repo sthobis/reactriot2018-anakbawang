@@ -150,7 +150,7 @@ class GameLobby extends Component {
             <div>
               <img src={tutorialImage1} alt="tutorial" />
               <p>
-                Follow arrow sequence shown on the creen, press your Arrow keys
+                Follow arrow sequence shown on the screen, press your Arrow keys
                 to complete the sequence.
               </p>
             </div>
