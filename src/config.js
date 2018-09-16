@@ -47,6 +47,8 @@ export default {
   },
   KEYS_CODE,
   ARROW_KEYS: [KEYS_CODE.UP, KEYS_CODE.DOWN, KEYS_CODE.LEFT, KEYS_CODE.RIGHT],
+  SFX:
+    "https://freesound.org/people/kasa90/sounds/143487/download/143487__kasa90__kick2.wav",
   SONG_LIST: [
     {
       title: "Audition - Euro 2005",

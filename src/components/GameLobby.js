@@ -3,6 +3,8 @@ import Youtube from "react-youtube";
 import CONFIG from "../config";
 import "../styles/GameLobby.css";
 
+const AudioSFX = new Audio(CONFIG.SFX);
+
 class GameLobby extends Component {
   state = {
     selectedSongIndex: 0
@@ -15,12 +17,19 @@ class GameLobby extends Component {
     document.removeEventListener("keydown", this.handleKeyDown);
   }
 
+  playSFX = () => {
+    AudioSFX.pause();
+    AudioSFX.currentTime = 0;
+    AudioSFX.play();
+  };
+
   handleKeyDown = e => {
     const { handleChangeSong } = this.props;
     const { selectedSongIndex } = this.state;
 
     switch (e.which) {
       case CONFIG.KEYS_CODE.UP:
+        this.playSFX();
         this.setState(state => ({
           selectedSongIndex:
             (state.selectedSongIndex + CONFIG.SONG_LIST.length - 1) %
@@ -28,12 +37,14 @@ class GameLobby extends Component {
         }));
         break;
       case CONFIG.KEYS_CODE.DOWN:
+        this.playSFX();
         this.setState(state => ({
           selectedSongIndex:
             (state.selectedSongIndex + 1) % CONFIG.SONG_LIST.length
         }));
         break;
       case CONFIG.KEYS_CODE.ENTER:
+        this.playSFX();
         handleChangeSong(CONFIG.SONG_LIST[selectedSongIndex]);
         break;
       default:

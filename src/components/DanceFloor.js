@@ -16,9 +16,7 @@ const keyCodeToComponent = key => {
   else return null;
 };
 
-var SpaceAudio = new Audio(
-  "https://freesound.org/people/kasa90/sounds/143487/download/143487__kasa90__kick2.wav"
-);
+const AudioSFX = new Audio(CONFIG.SFX);
 
 class DanceFloor extends Component {
   static defaultProps = {
@@ -393,9 +391,9 @@ class DanceFloor extends Component {
         }
         break;
       case CONFIG.KEYS_CODE.SPACE:
-        SpaceAudio.pause();
-        SpaceAudio.currentTime = 0;
-        SpaceAudio.play();
+        AudioSFX.pause();
+        AudioSFX.currentTime = 0;
+        AudioSFX.play();
         if (
           solutionSequence[currentSequenceIndex] &&
           solutionSequence[currentSequenceIndex].toString() ===
