@@ -79,7 +79,7 @@ export default {
       youtubeId: "a0pKzHtb_Gc",
       bpm: 150,
       previewStartAt: 75,
-      delay: 1100,
+      delay: 1200,
       skipInterval: 2
     },
     {
