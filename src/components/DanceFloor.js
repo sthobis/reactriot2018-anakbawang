@@ -16,6 +16,10 @@ const keyCodeToComponent = key => {
   else return null;
 };
 
+var SpaceAudio = new Audio(
+  "https://freesound.org/people/kasa90/sounds/143487/download/143487__kasa90__kick2.wav"
+);
+
 class DanceFloor extends Component {
   static defaultProps = {
     song: CONFIG.SONG_LIST[2]
@@ -264,7 +268,6 @@ class DanceFloor extends Component {
         this.setState(
           produce(draft => {
             draft.resultSequence[currentSequenceIndex] = CONFIG.HIT_TYPE.MISS;
-            draft.score[CONFIG.HIT_TYPE.MISS]++;
             draft.perfectStreak = 0;
           })
         );
@@ -390,6 +393,9 @@ class DanceFloor extends Component {
         }
         break;
       case CONFIG.KEYS_CODE.SPACE:
+        SpaceAudio.pause();
+        SpaceAudio.currentTime = 0;
+        SpaceAudio.play();
         if (
           solutionSequence[currentSequenceIndex] &&
           solutionSequence[currentSequenceIndex].toString() ===
@@ -401,7 +407,6 @@ class DanceFloor extends Component {
             produce(draft => {
               draft.pressedKeys = [];
               draft.resultSequence[currentSequenceIndex] = currentHitType;
-              draft.score[currentHitType]++;
               // if user get's a perfect, update his perfect streak
               if (currentHitType === CONFIG.HIT_TYPE.PERFECT) {
                 draft.perfectStreak++;
@@ -410,14 +415,13 @@ class DanceFloor extends Component {
               }
             })
           );
-        } else {
+        } else if (solutionSequence[currentSequenceIndex]) {
           // player propose wrong solution
           // for current sequence
           this.setState(
             produce(draft => {
               draft.pressedKeys = [];
               draft.resultSequence[currentSequenceIndex] = CONFIG.HIT_TYPE.MISS;
-              draft.score[CONFIG.HIT_TYPE.MISS]++;
               draft.perfectStreak = 0;
             })
           );
@@ -443,8 +447,7 @@ class DanceFloor extends Component {
       pressedKeys,
       perfectStreak,
       timePassed,
-      duration,
-      score
+      duration
     } = this.state;
 
     return (
@@ -463,13 +466,30 @@ class DanceFloor extends Component {
         {isSongReady &&
           !isSongFinished && (
             <p className="live-score">
-              PERFECT : {score.PERFECT}
+              PERFECT :{" "}
+              {
+                resultSequence.filter(
+                  result => result === CONFIG.HIT_TYPE.PERFECT
+                ).length
+              }
               <br />
-              COOL : {score.COOL}
+              COOL :{" "}
+              {
+                resultSequence.filter(result => result === CONFIG.HIT_TYPE.COOL)
+                  .length
+              }
               <br />
-              BAD : {score.BAD}
+              BAD :{" "}
+              {
+                resultSequence.filter(result => result === CONFIG.HIT_TYPE.BAD)
+                  .length
+              }
               <br />
-              MISS : {score.MISS}
+              MISS :{" "}
+              {
+                resultSequence.filter(result => result === CONFIG.HIT_TYPE.MISS)
+                  .length
+              }
             </p>
           )}
         {isSongReady &&
@@ -568,19 +588,43 @@ class DanceFloor extends Component {
               <tbody>
                 <tr>
                   <td>Perfect</td>
-                  <td>{score.PERFECT}</td>
+                  <td>
+                    {
+                      resultSequence.filter(
+                        result => result === CONFIG.HIT_TYPE.PERFECT
+                      ).length
+                    }
+                  </td>
                 </tr>
                 <tr>
                   <td>Cool</td>
-                  <td>{score.COOL}</td>
+                  <td>
+                    {
+                      resultSequence.filter(
+                        result => result === CONFIG.HIT_TYPE.COOL
+                      ).length
+                    }
+                  </td>
                 </tr>
                 <tr>
                   <td>Bad</td>
-                  <td>{score.BAD}</td>
+                  <td>
+                    {
+                      resultSequence.filter(
+                        result => result === CONFIG.HIT_TYPE.BAD
+                      ).length
+                    }
+                  </td>
                 </tr>
                 <tr>
                   <td>Miss</td>
-                  <td>{score.MISS}</td>
+                  <td>
+                    {
+                      resultSequence.filter(
+                        result => result === CONFIG.HIT_TYPE.MISS
+                      ).length
+                    }
+                  </td>
                 </tr>
               </tbody>
             </table>
