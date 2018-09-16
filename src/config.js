@@ -51,6 +51,22 @@ export default {
     "https://freesound.org/people/kasa90/sounds/143487/download/143487__kasa90__kick2.wav",
   SONG_LIST: [
     {
+      title: "Audition - U Know",
+      youtubeId: "fvjY8-miFUc",
+      bpm: 90,
+      previewStartAt: 5,
+      delay: 1000,
+      skipInterval: 2
+    },
+    {
+      title: "Audition - Canon Groove",
+      youtubeId: "9rgh1GrFeoI",
+      bpm: 105,
+      previewStartAt: 23,
+      delay: 2100,
+      skipInterval: 2
+    },
+    {
       title: "Audition - Euro 2005",
       youtubeId: "e00_z9cvdEQ",
       bpm: 138,
@@ -59,11 +75,19 @@ export default {
       skipInterval: 2
     },
     {
-      title: "Audition Days - Canon Groove",
-      youtubeId: "N1frS_LWy24",
-      bpm: 105,
-      previewStartAt: 23,
-      delay: 2100,
+      title: "Audition - Can Can",
+      youtubeId: "a0pKzHtb_Gc",
+      bpm: 150,
+      previewStartAt: 75,
+      delay: 1100,
+      skipInterval: 2
+    },
+    {
+      title: "Audition - Love Mode",
+      youtubeId: "38GoUyhx8zc",
+      bpm: 190,
+      previewStartAt: 45,
+      delay: 1100,
       skipInterval: 2
     }
   ]
