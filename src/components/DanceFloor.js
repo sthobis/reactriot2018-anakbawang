@@ -37,6 +37,7 @@ class DanceFloor extends Component {
     pressedKeys: [],
     currentHitType: CONFIG.HIT_TYPE.MISS,
     perfectStreak: 0,
+    highestPerfectStreak: 0,
     score: {
       MISS: 0,
       BAD: 0,
@@ -408,6 +409,9 @@ class DanceFloor extends Component {
               // if user get's a perfect, update his perfect streak
               if (currentHitType === CONFIG.HIT_TYPE.PERFECT) {
                 draft.perfectStreak++;
+                if (draft.perfectStreak > draft.highestPerfectStreak) {
+                  draft.highestPerfectStreak++;
+                }
               } else {
                 draft.perfectStreak = 0;
               }
@@ -444,6 +448,7 @@ class DanceFloor extends Component {
       currentSequenceIndex,
       pressedKeys,
       perfectStreak,
+      highestPerfectStreak,
       timePassed,
       duration
     } = this.state;
@@ -488,6 +493,8 @@ class DanceFloor extends Component {
                 resultSequence.filter(result => result === CONFIG.HIT_TYPE.MISS)
                   .length
               }
+              <br />
+              COMBO RECORD : x{highestPerfectStreak}
             </p>
           )}
         {isSongReady &&
