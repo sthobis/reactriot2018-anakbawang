@@ -568,40 +568,19 @@ class DanceFloor extends Component {
               <tbody>
                 <tr>
                   <td>Perfect</td>
-                  <td>
-                    {
-                      resultSequence.filter(
-                        str => str === CONFIG.HIT_TYPE.PERFECT
-                      ).length
-                    }
-                  </td>
+                  <td>{score.PERFECT}</td>
                 </tr>
                 <tr>
                   <td>Cool</td>
-                  <td>
-                    {
-                      resultSequence.filter(str => str === CONFIG.HIT_TYPE.COOL)
-                        .length
-                    }
-                  </td>
+                  <td>{score.COOL}</td>
                 </tr>
                 <tr>
                   <td>Bad</td>
-                  <td>
-                    {
-                      resultSequence.filter(str => str === CONFIG.HIT_TYPE.BAD)
-                        .length
-                    }
-                  </td>
+                  <td>{score.BAD}</td>
                 </tr>
                 <tr>
                   <td>Miss</td>
-                  <td>
-                    {
-                      resultSequence.filter(str => str === CONFIG.HIT_TYPE.MISS)
-                        .length
-                    }
-                  </td>
+                  <td>{score.MISS}</td>
                 </tr>
               </tbody>
             </table>
