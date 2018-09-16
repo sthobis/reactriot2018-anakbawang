@@ -2,12 +2,15 @@ import React, { Component } from "react";
 import Youtube from "react-youtube";
 import CONFIG from "../config";
 import "../styles/GameLobby.css";
+import tutorialImage1 from "../images/tutorial-1.png";
+import tutorialImage2 from "../images/tutorial-2.png";
 
 const AudioSFX = new Audio(CONFIG.SFX);
 
 class GameLobby extends Component {
   state = {
-    selectedSongIndex: 0
+    selectedSongIndex: 0,
+    showTutorial: false
   };
 
   componentDidMount() {
@@ -25,11 +28,12 @@ class GameLobby extends Component {
 
   handleKeyDown = e => {
     const { handleChangeSong } = this.props;
-    const { selectedSongIndex } = this.state;
+    const { selectedSongIndex, showTutorial } = this.state;
 
     switch (e.which) {
       case CONFIG.KEYS_CODE.UP:
         this.playSFX();
+        showTutorial && this.toggleTutorial();
         this.setState(state => ({
           selectedSongIndex:
             (state.selectedSongIndex + CONFIG.SONG_LIST.length - 1) %
@@ -38,6 +42,7 @@ class GameLobby extends Component {
         break;
       case CONFIG.KEYS_CODE.DOWN:
         this.playSFX();
+        showTutorial && this.toggleTutorial();
         this.setState(state => ({
           selectedSongIndex:
             (state.selectedSongIndex + 1) % CONFIG.SONG_LIST.length
@@ -47,9 +52,16 @@ class GameLobby extends Component {
         this.playSFX();
         handleChangeSong(CONFIG.SONG_LIST[selectedSongIndex]);
         break;
+      case CONFIG.KEYS_CODE.ESC:
+        this.toggleTutorial();
+        break;
       default:
         break;
     }
+  };
+
+  toggleTutorial = () => {
+    this.setState(state => ({ showTutorial: !state.showTutorial }));
   };
 
   handleSelectSong = selectedSongIndex => {
@@ -78,7 +90,7 @@ class GameLobby extends Component {
 
   render() {
     const { handleChangeSong } = this.props;
-    const { selectedSongIndex } = this.state;
+    const { selectedSongIndex, showTutorial } = this.state;
 
     return (
       <div className="lobby">
@@ -86,6 +98,8 @@ class GameLobby extends Component {
           Use Arrows to select song.
           <br />
           Press Enter to play.
+          <br />
+          Press Esc to show tutorial.
         </p>
         <div className="selection">
           {CONFIG.SONG_LIST.map((song, index) => (
@@ -131,6 +145,25 @@ class GameLobby extends Component {
           Made by <a href="https://github.com/sthobis">@sthobis</a> and{" "}
           <a href="https://github.com/ajiajikasmaji">@ajiajikasmaji</a>.
         </p>
+        {showTutorial && (
+          <div className="tutorial">
+            <div>
+              <img src={tutorialImage1} alt="tutorial" />
+              <p>
+                Follow arrow sequence shown on the creen, press your Arrow keys
+                to complete the sequence.
+              </p>
+            </div>
+            <div>
+              <img src={tutorialImage2} alt="tutorial" />
+              <p>
+                Once you complete the sequence, press Space key to submit. Don't
+                forget to match it with the beat/guide.
+              </p>
+            </div>
+            <span>Press Esc to close tutorial.</span>
+          </div>
+        )}
       </div>
     );
   }

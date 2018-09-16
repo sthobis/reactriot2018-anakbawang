@@ -15,8 +15,8 @@
   top: 15px;
   left: 50px;
   right: 50px;
-  font-size: 30px;
-  line-height: 1.25;
+  font-size: 22px;
+  line-height: 1.5;
   text-shadow: 3px 3px #fff;
 }
 
@@ -130,4 +130,35 @@
   text-decoration: none;
   color: #111;
   padding: 0 0 5px 0;
+}
+
+.lobby .tutorial {
+  left: auto;
+  right: auto;
+  width: 80%;
+  position: fixed;
+  padding: 50px;
+  background-color: #fff;
+  border: 10px solid #111;
+}
+
+.lobby .tutorial div {
+  display: flex;
+  align-items: center;
+}
+
+.lobby .tutorial img {
+  margin-right: 30px;
+}
+
+.lobby .tutorial p {
+  line-height: 1.5;
+  font-size: 20px;
+}
+
+.lobby .tutorial span {
+  display: block;
+  font-size: 18px;
+  text-align: center;
+  margin: 50px 0 0 0;
 }
