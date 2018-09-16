@@ -8,6 +8,13 @@ class GameLobby extends Component {
     selectedSongIndex: 0
   };
 
+  componentDidMount() {
+    document.addEventListener("keydown", this.handleKeyDown);
+  }
+  componentWillUnmount() {
+    document.removeEventListener("keydown", this.handleKeyDown);
+  }
+
   handleKeyDown = e => {
     const { handleChangeSong } = this.props;
     const { selectedSongIndex } = this.state;
@@ -34,15 +41,28 @@ class GameLobby extends Component {
     }
   };
 
-  componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyDown);
-  }
-  componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyDown);
-  }
-
   handleSelectSong = selectedSongIndex => {
     this.setState({ selectedSongIndex });
+  };
+
+  handleYoutubeReady = event => {
+    // make sure to autoplay the video on ready
+    event.target.playVideo();
+  };
+
+  handleYoutubeStateChange = event => {
+    /*
+      event.data :
+      -1 (unstarted)
+      0 (ended)
+      1 (playing)
+      2 (paused)
+      3 (buffering)
+      5 (video cued).
+    */
+    if (event.data === 0 || event.data === -1) {
+      event.target.playVideo();
+    }
   };
 
   render() {
@@ -91,6 +111,8 @@ class GameLobby extends Component {
                 showinfo: 0
               }
             }}
+            onReady={this.handleYoutubeReady}
+            onStateChange={this.handleYoutubeStateChange}
           />
           <marquee>{`${CONFIG.SONG_LIST[selectedSongIndex].title} (${
             CONFIG.SONG_LIST[selectedSongIndex].bpm
