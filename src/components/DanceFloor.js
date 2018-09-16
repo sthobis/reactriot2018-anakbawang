@@ -28,6 +28,7 @@ class DanceFloor extends Component {
     duration: 0,
     interval: ((60 * 1000) / this.props.song.bpm) * 4 * 2,
     guideOffset: 0,
+    timePassed: 0,
     solutionSequence: [],
     currentSequenceIndex: 0,
     resultSequence: [],
@@ -266,7 +267,7 @@ class DanceFloor extends Component {
     // keep updating current sequence index based on time passed
     // to show players which solution they need to solve at the moment
     const newSequenceIndex = Math.floor(timePassed / interval);
-    this.setState({ currentSequenceIndex: newSequenceIndex });
+    this.setState({ currentSequenceIndex: newSequenceIndex, timePassed });
 
     // update guide (left) offset on DOM based on
     // time passed since the song started
@@ -431,12 +432,24 @@ class DanceFloor extends Component {
       resultSequence,
       currentSequenceIndex,
       pressedKeys,
-      currentHitType,
-      perfectStreak
+      perfectStreak,
+      timePassed,
+      duration
     } = this.state;
 
     return (
       <div className="room">
+        {isSongReady &&
+          !isSongFinished && (
+            <div className="progress-bar">
+              <span
+                style={{
+                  width: `${duration > 0 ? (timePassed / duration) * 100 : 0}%`
+                }}
+              />
+              {duration > 0 ? Math.floor((timePassed / duration) * 100) : 0}%
+            </div>
+          )}
         <Youtube
           videoId={song.youtubeId}
           containerClassName="youtube"
@@ -469,7 +482,7 @@ class DanceFloor extends Component {
                     width: `${CONFIG.GUIDE_WIDTH}px`,
                     height: `${CONFIG.GUIDE_WIDTH}px`,
                     left: `${guideOffset}px`,
-                    backgroundColor: CONFIG.COLOR[currentHitType]
+                    backgroundColor: CONFIG.COLOR[CONFIG.HIT_TYPE.MISS]
                   }}
                 />
               </div>
