@@ -41,10 +41,6 @@
   margin-top: 20px;
 }
 
-.lobby .selection .song.active button {
-  color: orangered;
-}
-
 .lobby .selection .song span {
   display: block;
   font-size: 50px;
@@ -57,12 +53,16 @@
   cursor: pointer;
   background-color: #fff;
   border: 6px solid #111;
-  padding: 15px 20px 13px 20px;
+  padding: 8px 25px 5px 25px;
   line-height: 1.75;
   text-align: left;
   text-transform: uppercase;
   text-shadow: 2px 2px #ccc;
   font-size: 14px;
+}
+
+.lobby .selection .song.active button {
+  color: orangered;
 }
 
 .lobby .preview {

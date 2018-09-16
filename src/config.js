@@ -59,11 +59,11 @@ export default {
       skipInterval: 2
     },
     {
-      title: "Audition - Canon Groove",
-      youtubeId: "9rgh1GrFeoI",
-      bpm: 105,
-      previewStartAt: 23,
-      delay: 2100,
+      title: "Audition - Beat City",
+      youtubeId: "qv-aRs889T8",
+      bpm: 120,
+      previewStartAt: 36,
+      delay: 1100,
       skipInterval: 2
     },
     {

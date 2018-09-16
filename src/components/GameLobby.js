@@ -98,9 +98,7 @@ class GameLobby extends Component {
                 onClick={() => handleChangeSong(CONFIG.SONG_LIST[index])}
                 onMouseOver={() => this.setState({ selectedSongIndex: index })}
               >
-                {song.title}
-                <br />
-                {song.bpm} bpm
+                {song.title} ({song.bpm} bpm)
               </button>
             </div>
           ))}
