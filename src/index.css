@@ -22,6 +22,7 @@ body {
 
 #hackbit-vote-widget .hb-vote-widget a.hb-link {
   color: #111;
+  text-shadow: 2px 2px #fff;
 }
 
 #hackbit-vote-widget .hb-vote-widget a.hb-vote-btn {
