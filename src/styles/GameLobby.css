@@ -17,6 +17,7 @@
   right: 50px;
   font-size: 30px;
   line-height: 1.25;
+  text-shadow: 3px 3px #fff;
 }
 
 .lobby .selection {
@@ -56,10 +57,12 @@
   cursor: pointer;
   background-color: #fff;
   border: 6px solid #111;
-  padding: 15px 20px;
+  padding: 15px 20px 13px 20px;
   line-height: 1.75;
   text-align: left;
   text-transform: uppercase;
+  text-shadow: 2px 2px #ccc;
+  font-size: 14px;
 }
 
 .lobby .preview {
@@ -87,7 +90,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: calc(100% - 60px);
+  height: 100%;
   background-color: #111;
   opacity: 0.15;
   background: url("../images/static.gif");
@@ -102,7 +105,6 @@
   width: 100%;
   height: calc(100% - 60px);
   background-color: #111;
-  border-bottom: 10px solid #111;
 }
 
 .lobby .preview marquee {
@@ -112,12 +114,14 @@
   right: 60px;
   width: calc(100% - 120px);
   text-transform: uppercase;
+  text-shadow: 2px 2px #ccc;
 }
 
 .lobby .credit {
   position: absolute;
   left: 50px;
   bottom: 20px;
+  text-shadow: 2px 2px #fff;
 }
 
 .lobby .credit a,
@@ -126,5 +130,4 @@
   text-decoration: none;
   color: #111;
   padding: 0 0 5px 0;
-  border-bottom: 3px solid #111;
 }

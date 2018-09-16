@@ -34,7 +34,13 @@ class DanceFloor extends Component {
     resultSequence: [],
     pressedKeys: [],
     currentHitType: CONFIG.HIT_TYPE.MISS,
-    perfectStreak: 0
+    perfectStreak: 0,
+    score: {
+      MISS: 0,
+      BAD: 0,
+      PERFECT: 0,
+      COOL: 0
+    }
   };
 
   // timestamp when requestAnimationFrame
@@ -258,6 +264,7 @@ class DanceFloor extends Component {
         this.setState(
           produce(draft => {
             draft.resultSequence[currentSequenceIndex] = CONFIG.HIT_TYPE.MISS;
+            draft.score[CONFIG.HIT_TYPE.MISS]++;
             draft.perfectStreak = 0;
           })
         );
@@ -394,6 +401,7 @@ class DanceFloor extends Component {
             produce(draft => {
               draft.pressedKeys = [];
               draft.resultSequence[currentSequenceIndex] = currentHitType;
+              draft.score[currentHitType]++;
               // if user get's a perfect, update his perfect streak
               if (currentHitType === CONFIG.HIT_TYPE.PERFECT) {
                 draft.perfectStreak++;
@@ -409,6 +417,7 @@ class DanceFloor extends Component {
             produce(draft => {
               draft.pressedKeys = [];
               draft.resultSequence[currentSequenceIndex] = CONFIG.HIT_TYPE.MISS;
+              draft.score[CONFIG.HIT_TYPE.MISS]++;
               draft.perfectStreak = 0;
             })
           );
@@ -434,7 +443,8 @@ class DanceFloor extends Component {
       pressedKeys,
       perfectStreak,
       timePassed,
-      duration
+      duration,
+      score
     } = this.state;
 
     return (
@@ -449,6 +459,26 @@ class DanceFloor extends Component {
               />
               {duration > 0 ? Math.floor((timePassed / duration) * 100) : 0}%
             </div>
+          )}
+        {isSongReady &&
+          !isSongFinished && (
+            <p className="live-score">
+              PERFECT : {score.PERFECT}
+              <br />
+              COOL : {score.COOL}
+              <br />
+              BAD : {score.BAD}
+              <br />
+              MISS : {score.MISS}
+            </p>
+          )}
+        {isSongReady &&
+          !isSongFinished && (
+            <p className="now-playing">
+              {song.title}
+              <br />
+              {song.bpm} bpm
+            </p>
           )}
         <Youtube
           videoId={song.youtubeId}
@@ -522,6 +552,10 @@ class DanceFloor extends Component {
             ) : null}
           </div>
         </div>
+        {isSongReady &&
+          !isSongFinished && (
+            <p className="help">Press Esc to quit the game.</p>
+          )}
         {isSongFinished && (
           <div className="scoreboard">
             <table>

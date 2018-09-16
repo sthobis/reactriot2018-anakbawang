@@ -31,6 +31,24 @@
   z-index: -1;
 }
 
+.room .live-score {
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  line-height: 1.5;
+  text-shadow: 2px 2px #fff;
+}
+
+.room .now-playing {
+  position: fixed;
+  top: 50px;
+  right: 50px;
+  line-height: 1.5;
+  text-align: right;
+  text-transform: uppercase;
+  text-shadow: 2px 2px #fff;
+}
+
 .room .youtube {
   position: fixed;
   bottom: 0;
@@ -136,13 +154,19 @@
 }
 .room .hit-text {
   position: absolute;
-  top: -150px;
+  top: -130px;
 }
 .room .hit-text span {
   display: block;
-  background: #fff;
-  border: 5px solid #111;
+  text-shadow: 3px 3px #fff;
   padding: 15px;
+  font-size: 26px;
+}
+.room .help {
+  position: fixed;
+  bottom: 25px;
+  left: 50px;
+  text-shadow: 2px 2px #fff;
 }
 .room .scoreboard {
   position: fixed;
